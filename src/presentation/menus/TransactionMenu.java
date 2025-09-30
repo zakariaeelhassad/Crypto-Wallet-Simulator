@@ -1,5 +1,6 @@
 package presentation.menus;
 
+import presentation.MainMenu;
 import presentation.TransactionUi;
 import utili.ValidationChoix;
 
@@ -8,10 +9,15 @@ import java.util.Scanner;
 public class TransactionMenu {
 
     private final TransactionUi transactionUi;
+    private MainMenu mainMenu;
     private final Scanner sc = new Scanner(System.in);
 
     public TransactionMenu(TransactionUi transactionUi) {
         this.transactionUi = transactionUi;
+    }
+
+    public void setMainMenu(MainMenu mainMenu){
+        this.mainMenu = mainMenu;
     }
 
     public void transactionPresentation(){
@@ -28,6 +34,8 @@ public class TransactionMenu {
 
             switch (choice) {
                 case 1 : transactionUi.create();
+                    break;
+                case 0 : mainMenu.showMenu();
                     break;
                 default: System.out.println("Wrong choice");
             }
