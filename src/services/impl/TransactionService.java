@@ -21,16 +21,27 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction create(Transaction transaction) {
-        double fee = calculateFee(
-                transaction.getCryptoType(),
-                transaction.getFeeLevel(),
-                transaction.getAmount()
-        );
+        Wallet sourceWallet = repository.getWalletByAddress(transaction.getSourceAddress());
+        Wallet destinationWallet = repository.getWalletByAddress(transaction.getDestinationAddress());
+
+        if (sourceWallet == null || destinationWallet == null) {
+            System.out.println("Wallet source ou destination introuvable");
+            return null;
+        }
+
+        double fee = calculateFee(transaction.getCryptoType(), transaction.getFeeLevel(), transaction.getAmount());
         transaction.setFees(fee);
 
-        transaction.setAmount(transaction.getAmount() - fee);
+        double totalDebit = transaction.getAmount() + fee;
+        if (sourceWallet.getBalance() < totalDebit) {
+            System.out.println("Solde insuffisant pour l'adresse source");
+            return null;
+        }
 
-        return repository.createTransaction(transaction);
+        sourceWallet.setBalance(sourceWallet.getBalance() - totalDebit);
+        destinationWallet.setBalance(destinationWallet.getBalance() + transaction.getAmount());
+
+        return repository.createTransaction(transaction, sourceWallet, destinationWallet);
     }
 
     @Override
