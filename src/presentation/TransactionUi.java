@@ -6,6 +6,7 @@ import models.entities.Wallet;
 import models.enums.CryptoType;
 import models.enums.FeeLevel;
 import models.enums.TransactionStatus;
+import services.IMempoolService;
 import services.ITransactionService;
 import utili.ValidationAddress;
 import utili.ValidationMenuTransaction;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class TransactionUi {
 
     private final ITransactionService service;
+    private IMempoolService mempoolService;
     private final Scanner sc = new Scanner(System.in);
 
     public TransactionUi(ITransactionService service) {
@@ -97,6 +99,9 @@ public class TransactionUi {
             System.out.println("Fees: " + createdTransaction.getFees());
             System.out.println("Fee level: " + createdTransaction.getFeeLevel());
             System.out.println("Status: " + createdTransaction.getStatus());
+
+            MempoolUi mempoolUi = new MempoolUi(mempoolService);
+            mempoolUi.addTransactionToMempool(createdTransaction);
         }
 
         return createdTransaction;
