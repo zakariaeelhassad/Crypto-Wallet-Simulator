@@ -45,38 +45,53 @@ public class TransactionRepository implements ITransactionRepository {
     }
 
 
-    public Transaction createTransaction(Transaction transaction) {
+    public Transaction createTransaction(Transaction transaction , Wallet sourceWallet, Wallet destinationWallet) {
         Wallet wallet = getWalletByAddress(transaction.getSourceAddress());
         if (wallet == null) {
             logger.warning("Transaction annulée: wallet source introuvable pour l'adresse " + transaction.getSourceAddress());
             return null;
         }
 
+        String sqlUpdateWallet  = "UPDATE wallets SET balance = ? WHERE id = ?";
         String sql = "INSERT INTO transactions " +
                 "(id, wallet_id, from_address, to_address, amount, fee, fee_level, status) " +
                 "VALUES (?, ?::uuid, ?, ?, ?, ?, ?::fee_level, ?::tx_status)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setObject(1, UUID.fromString(transaction.getId()));
-            stmt.setObject(2, UUID.fromString(wallet.getId()));
-            stmt.setString(3, transaction.getSourceAddress());
-            stmt.setString(4, transaction.getDestinationAddress());
-            stmt.setDouble(5, transaction.getAmount());
-            stmt.setDouble(6, transaction.getFees());
-            stmt.setString(7, transaction.getFeeLevel().toString());
-            stmt.setString(8, transaction.getStatus().toString());
-
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                logger.info("Transaction créée avec succès: " + transaction.getId());
-            } else {
-                logger.warning("Échec de la création de la transaction: " + transaction.getId());
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement stmt = connection.prepareStatement(sqlUpdateWallet)) {
+                stmt.setDouble(1, sourceWallet.getBalance());
+                stmt.setObject(2, UUID.fromString(sourceWallet.getId()));
+                stmt.executeUpdate();
             }
 
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erreur lors de la création de la transaction: " + transaction.getId(), e);
-        }
+            try (PreparedStatement stmt = connection.prepareStatement(sqlUpdateWallet)) {
+                stmt.setDouble(1, destinationWallet.getBalance());
+                stmt.setObject(2, UUID.fromString(destinationWallet.getId()));
+                stmt.executeUpdate();
+            }
 
-        return transaction;
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setObject(1, UUID.fromString(transaction.getId()));
+                stmt.setObject(2, UUID.fromString(sourceWallet.getId()));
+                stmt.setString(3, transaction.getSourceAddress());
+                stmt.setString(4, transaction.getDestinationAddress());
+                stmt.setDouble(5, transaction.getAmount());
+                stmt.setDouble(6, transaction.getFees());
+                stmt.setString(7, transaction.getFeeLevel().toString());
+                stmt.setString(8, transaction.getStatus().toString());
+                stmt.executeUpdate();
+            }
+
+            connection.commit();
+            return transaction;
+
+        } catch (SQLException e) {
+            try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            e.printStackTrace();
+            return null;
+        } finally {
+            try { connection.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+        }
     }
 }
