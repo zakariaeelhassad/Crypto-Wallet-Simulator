@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface ITransactionRepository {
 
     Wallet getWalletByAddress(String sourceAddress);
-    Transaction createTransaction(Transaction transaction);
+    Transaction createTransaction(Transaction transaction , Wallet sourceWallet, Wallet destinationWallet);
 }
