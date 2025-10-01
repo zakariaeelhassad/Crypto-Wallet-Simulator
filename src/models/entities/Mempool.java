@@ -1,18 +1,15 @@
 package models.entities;
 
-import models.entities.Transaction;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Mempool {
-
     private UUID id;
     private UUID transactionId;
-    private Transaction transaction;
     private String feeLevel;
     private int position;
     private LocalDateTime createdAt;
+    private Transaction transaction;
 
     public Mempool(UUID id, UUID transactionId, String feeLevel, int position, LocalDateTime createdAt) {
         this.id = id;
@@ -22,28 +19,24 @@ public class Mempool {
         this.createdAt = createdAt;
     }
 
-    public Mempool( UUID id ,UUID transactionId, String feeLevel, int position) {
-        this.id = id;
-        this.transactionId = transactionId;
-        this.feeLevel = feeLevel;
-        this.position = position;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public UUID getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(UUID transactionId) {
-        this.transactionId = transactionId;
+    public String getFeeLevel() {
+        return feeLevel;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public Transaction getTransaction() {
@@ -54,27 +47,15 @@ public class Mempool {
         this.transaction = transaction;
     }
 
-    public String getFeeLevel() {
-        return feeLevel;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void setFeeLevel(String feeLevel) {
-        this.feeLevel = feeLevel;
-    }
+    public void show(){
+        System.out.println("ID: " + id);
+        System.out.println("Transaction ID: " + transactionId);
+        System.out.println("Fee Level: " + feeLevel);
+        System.out.println("Position: " + position);
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }
