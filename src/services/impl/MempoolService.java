@@ -8,17 +8,18 @@ import services.IMempoolService;
 import java.util.List;
 
 public class MempoolService implements IMempoolService {
-    private IMempoolRepository repository;
+
+    private final IMempoolRepository repository ;
 
     public MempoolService(IMempoolRepository repository) {
         this.repository = repository;
     }
 
-    public boolean addTransactionToMempool(Transaction transaction) {
+    public boolean addTransaction(Transaction transaction) {
         return repository.addTransactionToMempool(transaction);
     }
 
-    public List<Mempool> getAllTransactionsInMempool() {
+    public List<Mempool> getMempool() {
         return repository.getAllTransactionsInMempool();
     }
 }

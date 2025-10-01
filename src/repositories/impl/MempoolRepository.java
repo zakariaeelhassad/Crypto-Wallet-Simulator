@@ -23,20 +23,22 @@ public class MempoolRepository implements IMempoolRepository {
     private final Connection connection = JdbcConnection.getInstance().getConnection();
     private static final Logger logger = Logger.getLogger(MempoolRepository.class.getName());
 
+    @Override
     public boolean addTransactionToMempool(Transaction transaction) {
         String sql = "INSERT INTO mempool (transaction_id, fee_level, position) VALUES (?, ?::fee_level, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setObject(1, UUID.fromString(transaction.getId()));
             stmt.setString(2, transaction.getFeeLevel().toString());
-            stmt.setInt(3, 0); // position sera calculée plus tard
+            stmt.setInt(3, 0); // par défaut position 0
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erreur lors de l'insertion dans le mempool", e);
             return false;
         }
     }
 
+    @Override
     public List<Mempool> getAllTransactionsInMempool() {
         List<Mempool> mempoolList = new ArrayList<>();
         String sql = "SELECT m.id, m.transaction_id, m.fee_level, m.position, m.created_at, " +
@@ -47,11 +49,9 @@ public class MempoolRepository implements IMempoolRepository {
                 "JOIN wallets w ON t.wallet_id = w.id " +
                 "ORDER BY m.position ASC";
 
-
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-
                 Transaction transaction = new Transaction(
                         rs.getObject("transaction_id").toString(),
                         rs.getObject("wallet_id").toString(),
@@ -64,7 +64,6 @@ public class MempoolRepository implements IMempoolRepository {
                 );
                 transaction.setFees(rs.getDouble("fee"));
 
-                // Création dyal Mempool object
                 Mempool mempool = new Mempool(
                         (UUID) rs.getObject("id"),
                         (UUID) rs.getObject("transaction_id"),
@@ -73,7 +72,7 @@ public class MempoolRepository implements IMempoolRepository {
                         rs.getTimestamp("created_at").toLocalDateTime()
                 );
 
-                mempool.setTransaction(transaction); // Connecter transaction m3a mempool
+                mempool.setTransaction(transaction);
                 mempoolList.add(mempool);
             }
         } catch (SQLException e) {
@@ -82,5 +81,4 @@ public class MempoolRepository implements IMempoolRepository {
 
         return mempoolList;
     }
-
 }

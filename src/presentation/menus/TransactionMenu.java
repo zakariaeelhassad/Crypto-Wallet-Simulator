@@ -24,12 +24,12 @@ public class TransactionMenu {
         int choice;
         ValidationChoix validator = new ValidationChoix();
         do{
-            System.out.println("1 ^_^ Ajouter transaction ");
-            System.out.println("4 ^_^ find by id transaction ");
-            System.out.println("5 ^_^ find all transaction ");
-
-            System.out.println("0 ^_^ GO BACK TO THE MAIN MENU");
-            System.out.print("Enter your choice");
+            System.out.println("\n=== TRANSACTION MENU ===");
+            System.out.println("1. Ajouter une transaction");
+            System.out.println("4. Rechercher une transaction par ID");
+            System.out.println("5. Afficher toutes les transactions");
+            System.out.println("0. Retour au menu principal");
+            System.out.print("Votre choix : ");
             choice = validator.validationChoix();
 
             switch (choice) {
@@ -37,7 +37,7 @@ public class TransactionMenu {
                     break;
                 case 0 : mainMenu.showMenu();
                     break;
-                default: System.out.println("Wrong choice");
+                default: System.out.println("WChoix invalide !");
             }
         }while(choice != 0);
     }

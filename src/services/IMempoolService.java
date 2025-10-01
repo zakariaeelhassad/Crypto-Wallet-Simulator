@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IMempoolService {
 
-    boolean addTransactionToMempool(Transaction transaction);
-    List<Mempool> getAllTransactionsInMempool();
+    boolean addTransaction(Transaction transaction);
+    List<Mempool> getMempool();
 }
