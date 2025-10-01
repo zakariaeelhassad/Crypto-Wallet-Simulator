@@ -25,10 +25,12 @@ public class MainMenu {
         ValidationChoix validator = new ValidationChoix();
 
         do{
-            System.out.println("1 : Wallet ");
-            System.out.println("2 : transaction ");
-            System.out.println("3 : Mempool ");
-            System.out.print("choice : ");
+            System.out.println("\n=== MAIN MENU ===");
+            System.out.println("1. Wallet");
+            System.out.println("2. Transaction");
+            System.out.println("3. Mempool");
+            System.out.println("0. Quitter");
+            System.out.print("Votre choix : ");
             choice = validator.validationChoix();
 
             switch (choice) {
@@ -39,7 +41,7 @@ public class MainMenu {
                 case 3 : mempoolMenu.MempoolPresentation();
                 case 0 : System.exit(0);
                     break;
-                default:System.out.println("Wrong choice");
+                default:System.out.println("Choix invalide !");
                     break;
             };
         }while(choice != 0);

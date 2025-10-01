@@ -18,11 +18,12 @@ import java.util.UUID;
 public class TransactionUi {
 
     private final ITransactionService service;
-    private IMempoolService mempoolService;
+    private final IMempoolService mempoolService;
     private final Scanner sc = new Scanner(System.in);
 
-    public TransactionUi(ITransactionService service) {
+    public TransactionUi(ITransactionService service ,  IMempoolService mempoolService) {
         this.service = service;
+        this.mempoolService = mempoolService;
     }
 
     public Transaction create() {
@@ -100,8 +101,12 @@ public class TransactionUi {
             System.out.println("Fee level: " + createdTransaction.getFeeLevel());
             System.out.println("Status: " + createdTransaction.getStatus());
 
-            MempoolUi mempoolUi = new MempoolUi(mempoolService);
-            mempoolUi.addTransactionToMempool(createdTransaction);
+            boolean added = mempoolService.addTransaction(createdTransaction);
+            if (added) {
+                System.out.println("Transaction ajoutée au mempool avec succès !");
+            } else {
+                System.out.println("Erreur lors de l'ajout de la transaction au mempool");
+            }
         }
 
         return createdTransaction;
