@@ -24,12 +24,12 @@ public class WalletMenu {
         int choice;
         ValidationChoix validator = new ValidationChoix();
         do{
-            System.out.println("1 ^_^ Ajouter Wallet ");
-            System.out.println("2 ^_^ delete Wallet ");
-            System.out.println("3 ^_^ update Wallet ");
-
-            System.out.println("0 ^_^ GO BACK TO THE MAIN MENU");
-            System.out.print("Enter your choice");
+            System.out.println("\n=== WALLET MENU ===");
+            System.out.println("1. Ajouter un Wallet");
+            System.out.println("2. Supprimer un Wallet");
+            System.out.println("3. Mettre à jour un Wallet");
+            System.out.println("0. Retour au menu principal");
+            System.out.print("Votre choix : ");
             choice = validator.validationChoix();
 
             switch (choice) {
@@ -41,7 +41,7 @@ public class WalletMenu {
                     break;
                 case 0 : mainMenu.showMenu();
                     break;
-                default: System.out.println("Wrong choice");
+                default: System.out.println("Choix invalide !");
             }
         }while(choice != 0);
     }
