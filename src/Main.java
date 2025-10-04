@@ -31,15 +31,15 @@ public class Main {
         WalletUi walletUi = new WalletUi(walletService);
         WalletMenu walletMenu = new WalletMenu(walletUi);
 
-        ITransactionRepository transactionRepository = new TransactionRepository();
-        ITransactionService transactionService = new TransactionService(transactionRepository);
-        TransactionUi transactionUi = new TransactionUi(transactionService);
-        TransactionMenu transactionMenu = new TransactionMenu(transactionUi);
-
         IMempoolRepository mempoolRepository = new MempoolRepository();
         IMempoolService mempoolService = new MempoolService(mempoolRepository);
         MempoolUi mempoolUi = new MempoolUi(mempoolService);
         MempoolMenu mempolMenu = new MempoolMenu(mempoolUi);
+
+        ITransactionRepository transactionRepository = new TransactionRepository();
+        ITransactionService transactionService = new TransactionService(transactionRepository);
+        TransactionUi transactionUi = new TransactionUi(transactionService , mempoolService);
+        TransactionMenu transactionMenu = new TransactionMenu(transactionUi);
 
         MainMenu  mainMenu = new MainMenu(walletMenu , transactionMenu , mempolMenu);
         walletMenu.setMainMenu(mainMenu);
