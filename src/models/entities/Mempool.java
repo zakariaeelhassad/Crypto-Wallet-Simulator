@@ -51,7 +51,7 @@ public class Mempool {
         this.id = id;
     }
 
-    public void show(){
+    public void show() {
         System.out.println("ID: " + id);
         System.out.println("Transaction ID: " + transactionId);
         System.out.println("Fee Level: " + feeLevel);
