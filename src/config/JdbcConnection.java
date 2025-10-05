@@ -50,6 +50,7 @@ public class JdbcConnection {
 
     private void initConnection() {
         try {
+            Class.forName("org.postgresql.Driver");
             CONNECTION = DriverManager.getConnection("jdbc:postgresql://localhost:5432/crypto_wallet", "postgres", "zakaria");
         } catch (Exception var2) {
             throw new RuntimeException(var2);
