@@ -27,3 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Fichier contenant mots de passe ou config sensible
+src/config/db.properties
