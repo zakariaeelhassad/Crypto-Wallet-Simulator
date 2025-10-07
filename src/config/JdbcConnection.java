@@ -1,23 +1,23 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
+import java.io.InputStream;
 
 public class JdbcConnection {
+
     private static JdbcConnection INSTANCE = null;
     private static Connection CONNECTION = null;
-    private final String url = "jdbc:postgresql://localhost:5432/crypto_wallet";
-    private final String username = "postgres";
-    private final String password = "zakaria";
+
+    private String url;
+    private String username;
+    private String password;
 
     private JdbcConnection() {
-        this.initConnection();
+        loadProperties();
+        initConnection();
     }
 
     public static JdbcConnection getInstance() {
@@ -25,10 +25,9 @@ public class JdbcConnection {
             if (INSTANCE == null || INSTANCE.getConnection() == null || INSTANCE.getConnection().isClosed()) {
                 INSTANCE = new JdbcConnection();
             }
-
             return INSTANCE;
-        } catch (Exception var1) {
-            throw new RuntimeException(var1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -41,19 +40,31 @@ public class JdbcConnection {
             try {
                 CONNECTION.close();
                 INSTANCE = null;
-            } catch (SQLException var1) {
-                throw new RuntimeException(var1);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         }
-
     }
+
+    private void loadProperties() {
+        try (InputStream input = new java.io.FileInputStream("src/config/db.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+
+            url = prop.getProperty("db.url");
+            username = prop.getProperty("db.username");
+            password = prop.getProperty("db.password");
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur f lecture dyal properties", e);
+        }
+    }
+
 
     private void initConnection() {
         try {
-            Class.forName("org.postgresql.Driver");
-            CONNECTION = DriverManager.getConnection("jdbc:postgresql://localhost:5432/crypto_wallet", "postgres", "zakaria");
-        } catch (Exception var2) {
-            throw new RuntimeException(var2);
+            CONNECTION = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur f connexion DB", e);
         }
     }
 }
